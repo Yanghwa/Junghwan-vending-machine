@@ -42,6 +42,9 @@ Process
             - yes -> return change and decrease stock
             - no -> show options: cancel or accurate money to put/return money
 3. Diagram
+
+-   [Diagram Link](vending-machine.pdf)
+
 4. Structure Design
 5. Code
 6. Test
