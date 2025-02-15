@@ -203,6 +203,65 @@ class VendingMachine {
         }
     }
 
+    // method to handle cash payment
+    private async processCashPayment(drinkPrice: number): Promise<boolean> {
+        let insertedAmount = 0;
+        const insertedCash = new Map<number, number>();
+
+        while (true) {
+            const [cashType, quantity] = await this.getUserCashInput();
+            if (cashType === 0) {
+                this.returnInsertedCash(insertedCash);
+                return false; // cancel
+            }
+
+            insertedAmount += cashType * quantity;
+            insertedCash.set(
+                cashType,
+                (insertedCash.get(cashType) || 0) + quantity
+            );
+
+            if (insertedAmount >= drinkPrice) {
+                const changeAmount = insertedAmount - drinkPrice;
+                const change = this.cashInventory.getChange(changeAmount);
+
+                if (change) {
+                    this.provideChange(change);
+                    // cash to stock
+                    insertedCash.forEach((qty, denom) =>
+                        this.cashInventory.addCash(denom, qty)
+                    );
+                    return true; // payment succeed
+                } else {
+                    console.log("We are out of cash.");
+                    const choice = await this.getUserChoice(
+                        "1: Try with accurate cash, 2: Cancel"
+                    );
+                    if (choice === "1") {
+                        this.returnInsertedCash(insertedCash);
+                        insertedAmount = 0;
+                        insertedCash.clear();
+                        continue;
+                    } else {
+                        this.returnInsertedCash(insertedCash);
+                        return false; // cancel
+                    }
+                }
+            } else {
+                console.log(
+                    `You need ${drinkPrice - insertedAmount} KRW more.`
+                );
+                const choice = await this.getUserChoice(
+                    "1: Keep going, 2: Cancel"
+                );
+                if (choice === "2") {
+                    this.returnInsertedCash(insertedCash);
+                    return false; // cancel
+                }
+            }
+        }
+    }
+
     // method to handle credit payment
     private async processCardPayment(): Promise<boolean> {
         console.log("Credit payment");
