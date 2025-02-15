@@ -50,8 +50,13 @@ Process
 6. Test
 7. Doc
 
-===============================
-Task Description
+---
+
+---
+
+---
+
+# Task Description
 
 ## Task Overview
 
