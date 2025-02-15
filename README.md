@@ -37,6 +37,10 @@ Process
     - cancel process
         - return to show stocks
         - return cash if it exists
+    - change process
+        - money >= price -> calculate change is enough
+            - yes -> return change and decrease stock
+            - no -> show options: cancel or accurate money to put/return money
 3. Diagram
 4. Structure Design
 5. Code
