@@ -1,4 +1,49 @@
-Process
+# Junghwan Yang Vending machine
+
+### Installation
+
+1. Clone the repository:
+   git clone https://github.com/your-username/your-vending-machine-project.git
+
+2. Navigate to the project directory:
+   cd your-vending-machine-project
+
+3. Install dependencies:
+   yarn
+
+### Running the Project
+
+1. Compile the TypeScript code:
+   yarn build
+
+2. Run the compiled JavaScript:
+   yarn start
+
+### User Manual
+
+1. When the program starts, you'll see a list of available drinks.
+2. Enter the number corresponding to the drink you want to purchase.
+3. Choose your payment method (cash or credit card).
+4. If you chose cash:
+
+    a. Enter the the bill/coin you're inserting.
+
+    b. Enter the quantity of input of a.
+
+    c. Repeat until you've inserted enough money or choose to cancel.
+
+5. If you chose credit card, the payment will be processed automatically.
+6. If the payment is successful, you'll receive your drink and any change (for cash payments).
+7. You'll be asked if you want to make another purchase.
+8. To exit the program, choose not to make another purchase when prompted.
+
+### Notes
+
+-   The vending machine starts with a limited stock of drinks and change. If it runs out of either, you may not be able to complete your purchase.
+-   Credit card payments have a 90% success rate for demonstration purposes.
+-   You can cancel your purchase at various points by selecting the appropriate option.
+
+### Process how to make it work
 
 1. Requirement
     1. kinds of drinks define (name: price)
