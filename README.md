@@ -1,6 +1,24 @@
 Process
 
 1. Requirement
+    1. kinds of drinks define (name: price)
+    - Cola: 1,100
+    - Water: 600
+    - Coffee: 700
+    - stock of drinks at the beginning
+    2. kinds of payments define
+    - Cash: [100, 500, 5,000, 10,000]
+    - Credit
+    3. main function define
+    - function to choose drink
+    - function to pay
+    - function to maintain stock
+    - function to change
+    - function to cancel
+    4. exception define
+    - out of stocks
+    - lack of change
+    - fail to use credit
 2. System Design
 3. Diagram
 4. Structure Design
