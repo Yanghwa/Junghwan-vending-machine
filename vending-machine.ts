@@ -1,3 +1,5 @@
+import * as readline from "readline";
+
 enum Drink {
     COLA = "Cola",
     WATER = "Water",
