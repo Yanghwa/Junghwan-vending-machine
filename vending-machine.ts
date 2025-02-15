@@ -41,6 +41,40 @@ class CashInventory {
         return false;
     }
 
+    // method to calculate change
+    public getChange(amount: number): Map<number, number> | null {
+        const change = new Map<number, number>();
+        let remainingAmount = amount;
+        const cashTypeInventory = Array.from(this.inventory.keys()).sort(
+            (a, b) => b - a
+        );
+
+        // from large unit to small
+        for (const cashType of cashTypeInventory) {
+            const availableQuantity = this.inventory.get(cashType) || 0;
+            const neededQuantity = Math.min(
+                Math.floor(remainingAmount / cashType),
+                availableQuantity
+            );
+
+            if (neededQuantity > 0) {
+                change.set(cashType, neededQuantity);
+                remainingAmount -= cashType * neededQuantity;
+            }
+
+            if (remainingAmount === 0) break;
+        }
+
+        if (remainingAmount > 0) return null; // can't give change
+
+        // if inventory has enough change, remove cash from inventory
+        change.forEach((quantity, cashType) => {
+            this.removeCash(cashType, quantity);
+        });
+
+        return change;
+    }
+
     // total inventory cash
     public getTotalAmount(): number {
         return Array.from(this.inventory.entries()).reduce(
