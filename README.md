@@ -10,16 +10,33 @@ Process
     - Cash: [100, 500, 5,000, 10,000]
     - Credit
     3. main function define
+    - function to show stocks
     - function to choose drink
     - function to pay
     - function to maintain stock
     - function to change
     - function to cancel
     4. exception define
-    - out of stocks
     - lack of change
     - fail to use credit
 2. System Design
+    1. process define
+    - show stocks -> user choose drink -> choose payment method -> payment -> change
+    2. detail process
+    - show stocks: check stocks and list available drinks
+    - user choose drink: user reserve one drink by selection
+    - choose payment method: user choose credit or cash
+    - payment:
+        - credit: pass or fail
+            - pass: decrease stock
+            - fail: return to show stocks
+        - cash: pass of fail
+            - pass: return change
+            - fail: return to show stocks
+                - reason: lack of change
+    - cancel process
+        - return to show stocks
+        - return cash if it exists
 3. Diagram
 4. Structure Design
 5. Code
