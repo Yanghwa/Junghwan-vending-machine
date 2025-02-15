@@ -18,7 +18,39 @@ interface DrinkInfo {
 }
 
 // change maintance class
-class CashInventory {}
+class CashInventory {
+    private inventory: Map<number, number>;
+
+    constructor(initialInventory: [number, number][]) {
+        this.inventory = new Map(initialInventory);
+    }
+
+    // method to add cash for change stock
+    public addCash(cashType: number, quantity: number): void {
+        const currentQuantity = this.inventory.get(cashType) || 0;
+        this.inventory.set(cashType, currentQuantity + quantity);
+    }
+
+    // method to remove cash for change stock
+    public removeCash(cashType: number, quantity: number): boolean {
+        const currentQuantity = this.inventory.get(cashType) || 0;
+        if (currentQuantity >= quantity) {
+            this.inventory.set(cashType, currentQuantity - quantity);
+            return true;
+        }
+        return false;
+    }
+
+    // total inventory cash
+    public getTotalAmount(): number {
+        return Array.from(this.inventory.entries()).reduce(
+            (total, [cashType, quantity]) => {
+                return total + cashType * quantity;
+            },
+            0
+        );
+    }
+}
 
 // vendingmachine calss
 class VendingMachine {
@@ -40,7 +72,13 @@ class VendingMachine {
         });
 
         // init cash inventory
-        this.cashInventory = new CashInventory();
+        this.cashInventory = new CashInventory([
+            [10000, 5], // 50,000
+            [5000, 10], // 50,000
+            [1000, 20], // 20,000
+            [500, 50], // 25,000
+            [100, 100], // 10,000
+        ]);
     }
 
     // method to start vending machine
@@ -77,6 +115,130 @@ class VendingMachine {
             }
         }
         this.rl.close();
+    }
+
+    // method to show available drink
+    private async displayAvailableDrinksAndSelect(): Promise<DrinkInfo | null> {
+        console.log("Available Drink list:");
+        const availableDrinks = Array.from(this.drinks.values()).filter(
+            (drink) => drink.stock > 0
+        );
+
+        availableDrinks.forEach((drink, index) => {
+            console.log(
+                `${index + 1}. ${drink.name}: ${drink.price} KRW (stock: ${
+                    drink.stock
+                })`
+            );
+        });
+
+        const selection = await this.getUserInput(
+            "Chose the drink you want (0: Cancel): "
+        );
+        const selectedIndex = parseInt(selection) - 1;
+
+        if (selectedIndex === -1) {
+            console.log("Cancel.");
+            return null;
+        }
+
+        if (selectedIndex >= 0 && selectedIndex < availableDrinks.length) {
+            return availableDrinks[selectedIndex];
+        } else {
+            console.log("Wrong selection");
+            return null;
+        }
+    }
+
+    // method to choose payment
+    private async selectPaymentMethod(): Promise<PaymentMethod | null> {
+        const selection = await this.getUserInput(
+            "Choose payment method (1: Cash, 2: Credit, 0: Cancel): "
+        );
+        switch (selection) {
+            case "1":
+                return PaymentMethod.CASH;
+            case "2":
+                return PaymentMethod.CARD;
+            case "0":
+                console.log("Cancel.");
+                return null;
+            default:
+                console.log("Wrong selection.");
+                return null;
+        }
+    }
+
+    // method to handle credit payment
+    private async processCardPayment(): Promise<boolean> {
+        console.log("Credit payment");
+        const isSuccessful = Math.random() < 0.9; // 90% success, random test
+        if (isSuccessful) {
+            console.log("Your payment was successful");
+            return true;
+        } else {
+            console.log("Failed, Try again");
+            return false;
+        }
+    }
+
+    // method to give drink
+    private giveDrink(drink: DrinkInfo): void {
+        console.log(`${drink.name} is ready.`);
+        const updatedStock = this.drinks.get(drink.name)!.stock - 1;
+        this.drinks.set(drink.name, { ...drink, stock: updatedStock });
+    }
+
+    // method to give change
+    private provideChange(change: Map<number, number>): void {
+        console.log("Here is change:");
+        change.forEach((quantity, cashType) => {
+            console.log(`${cashType} KRW: ${quantity}`);
+        });
+    }
+
+    // method to return cash
+    private returnInsertedCash(insertedCash: Map<number, number>): void {
+        console.log("Return cash:");
+        insertedCash.forEach((quantity, cashType) => {
+            console.log(`${cashType} KRW: ${quantity}`);
+        });
+    }
+
+    // method to handle cash input
+    private async getUserCashInput(): Promise<[number, number]> {
+        const cashType = parseInt(
+            await this.getUserInput(
+                "What unit do you want to use (10000, 5000, 1000, 500, 100) (0: Cancel): "
+            )
+        );
+        if (cashType === 0) return [0, 0];
+        if (![10000, 5000, 1000, 500, 100].includes(cashType)) {
+            console.log("Wrong selection.");
+            return [0, 0];
+        }
+        const quantity = parseInt(
+            await this.getUserInput("Type how many you want to put: ")
+        );
+        if (isNaN(quantity) || quantity <= 0) {
+            console.log("Wrong selection.");
+            return [0, 0];
+        }
+        return [cashType, quantity];
+    }
+
+    // method to handle user select
+    private async getUserChoice(prompt: string): Promise<string> {
+        return this.getUserInput(prompt);
+    }
+
+    // user input from cmd line
+    private getUserInput(prompt: string): Promise<string> {
+        return new Promise((resolve) => {
+            this.rl.question(prompt, (answer) => {
+                resolve(answer);
+            });
+        });
     }
 }
 
