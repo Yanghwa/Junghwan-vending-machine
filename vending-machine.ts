@@ -14,3 +14,9 @@ interface DrinkInfo {
     price: number;
     stock: number;
 }
+
+// change maintance class
+class CashInventory {}
+
+// vendingmachine calss
+class VendingMachine {}
